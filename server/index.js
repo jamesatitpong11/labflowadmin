@@ -39,7 +39,11 @@ app.use(cors({
         'https://labflow-admin-backend.onrender.com'
       ] 
     : ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:8080'],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  preflightContinue: false,
+  optionsSuccessStatus: 200
 }));
 
 app.use(express.json({ limit: '10mb' }));
