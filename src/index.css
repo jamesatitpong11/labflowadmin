@@ -56,7 +56,9 @@ All colors MUST be HSL for consistency and theming
     --shadow-card: 0 1px 3px 0 hsl(220 43% 11% / 0.1), 0 1px 2px 0 hsl(220 43% 11% / 0.06);
     --shadow-hover: 0 4px 6px -1px hsl(220 43% 11% / 0.1), 0 2px 4px -1px hsl(220 43% 11% / 0.06);
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+    --radius-mobile: 1rem;
+    --radius-card-mobile: 1.25rem;
 
     /* Sidebar colors matching medical theme */
     --sidebar-background: 0 0% 100%;
@@ -122,5 +124,81 @@ All colors MUST be HSL for consistency and theming
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* iOS-style Mobile Design */
+@layer components {
+  .ios-card {
+    @apply bg-white/95 backdrop-blur-xl border-0 shadow-lg;
+    border-radius: var(--radius-card-mobile);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .ios-button {
+    @apply bg-blue-500 text-white font-medium px-6 py-3 rounded-2xl shadow-lg active:scale-95 transition-all duration-150;
+  }
+
+  .ios-metric-card {
+    @apply bg-white/90 backdrop-blur-xl p-4 rounded-2xl shadow-md border-0;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .ios-header {
+    @apply bg-white/80 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-50;
+  }
+
+  .ios-safe-area {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  .ios-scroll-container {
+    @apply overflow-y-auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* iOS-style animations */
+  .ios-bounce {
+    animation: ios-bounce 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  @keyframes ios-bounce {
+    0% { transform: scale(0.95); opacity: 0.8; }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* Mobile-specific styles */
+  @media (max-width: 768px) {
+    .mobile-padding {
+      @apply px-4 py-3;
+    }
+
+    .mobile-grid {
+      @apply grid-cols-1 gap-4;
+    }
+
+    .mobile-grid-2 {
+      @apply grid-cols-2 gap-3;
+    }
+
+    .mobile-text-lg {
+      @apply text-lg;
+    }
+
+    .mobile-text-sm {
+      @apply text-sm;
+    }
+
+    .mobile-hidden {
+      @apply hidden;
+    }
+
+    .mobile-show {
+      @apply block;
+    }
   }
 }

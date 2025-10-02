@@ -2,13 +2,15 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Layout } from "@/components/Layout";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import Finance from "./pages/Finance";
-import Users from "./pages/Users";
-import MedicalRecords from "./pages/MedicalRecords";
-import Sales from "./pages/Sales";
+import SalesReport from "./pages/SalesReport";
+import RegistrationReport from "./pages/RegistrationReport";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -18,19 +20,37 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Layout>
+      <AuthProvider>
+        <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/finance" element={<Finance />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/medical-records" element={<MedicalRecords />} />
-            <Route path="/sales" element={<Sales />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/" element={
+              <ProtectedRoute>
+                <Layout>
+                  <Dashboard />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/sales-report" element={
+              <ProtectedRoute>
+                <Layout>
+                  <SalesReport />
+                </Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/registration-report" element={
+              <ProtectedRoute>
+                <Layout>
+                  <RegistrationReport />
+                </Layout>
+              </ProtectedRoute>
+            } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </Layout>
-      </BrowserRouter>
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
