@@ -286,30 +286,38 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex-1 ios-safe-area ios-scroll-container bg-gradient-to-br from-slate-50/50 to-blue-50/30 min-h-screen">
-      <div className={`space-y-4 md:space-y-8 mobile-padding md:p-6 ${isMobile ? 'pb-20' : ''}`}>
-        {/* Header Section - iOS Style */}
-        <div className="ios-header mobile-padding md:p-6 mb-4 md:mb-8">
-          <div className="space-y-4">
-            {/* First Row: Title left, Buttons right */}
-            <div className="flex items-center justify-between">
-              <div className="space-y-1 md:space-y-2">
-                <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                  Dashboard
-                </h1>
-                <p className="text-gray-600 text-sm md:text-lg mobile-hidden md:block">
-                  ภาพรวมข้อมูลของระบบการจัดการทางการแพทย์
-                </p>
-                <div className="w-20 md:w-32 h-0.5 md:h-1 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full"></div>
-              </div>
+    <div className="flex-1 ios-safe-area ios-scroll-container bg-gradient-to-br from-indigo-50 via-white to-cyan-50 min-h-screen">
+      <div className={`space-y-6 md:space-y-8 mobile-padding md:p-6 ${isMobile ? 'pb-20' : ''}`}>
+        {/* Header Section - Enhanced Luxury Style */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 shadow-2xl shadow-blue-500/25">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-20">
+            <div className="w-full h-full bg-white/5 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.15)_1px,transparent_0)] bg-[length:20px_20px]"></div>
+          </div>
+          
+          <div className="relative mobile-padding md:p-8">
+            <div className="space-y-6">
+              {/* First Row: Title left, Buttons right */}
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 md:w-16 md:h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
+                    <BarChart3 className="w-6 h-6 md:w-8 md:h-8 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-2xl md:text-4xl font-bold text-white drop-shadow-sm">
+                      Dashboard
+                    </h1>
+                    <p className="text-blue-100 font-medium text-sm md:text-base">
+                      ภาพรวมข้อมูลของระบบการจัดการทางการแพทย์
+                    </p>
+                  </div>
+                </div>
               
-              <div className="flex items-center space-x-2 md:space-x-4">
-                {/* Date Range Selector */}
-                <div className="flex flex-col md:flex-row gap-2 md:gap-3">
-                  {/* Quick Date Range Buttons */}
-                  <div className="flex gap-1 md:gap-2">
+                {/* Date Range Controls - Glassmorphism Style */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md rounded-2xl p-1.5 border border-white/20">
                     <Button
-                      variant={dateRange === 'today' ? 'default' : 'outline'}
+                      variant={dateRange === 'today' ? 'default' : 'ghost'}
                       size={isMobile ? 'sm' : 'sm'}
                       onClick={() => {
                         const today = new Date();
@@ -317,63 +325,63 @@ const Dashboard = () => {
                         setDateRange('today');
                         console.log('🔄 Clicked "วันนี้" button - Reset to today');
                       }}
-                      className={`text-xs md:text-sm ios-button ${
+                      className={`text-xs md:text-sm rounded-xl transition-all duration-300 ${
                         dateRange === 'today' 
-                          ? 'bg-green-500 text-white hover:bg-green-600 border-green-500' 
-                          : 'text-green-500 bg-white hover:bg-green-50 border-green-500'
+                          ? 'bg-white text-blue-600 shadow-lg hover:shadow-xl' 
+                          : 'text-white hover:bg-white/20'
                       }`}
                     >
                       วันนี้
                     </Button>
                     <Button
-                      variant={dateRange === 'week' ? 'default' : 'outline'}
+                      variant={dateRange === 'week' ? 'default' : 'ghost'}
                       size={isMobile ? 'sm' : 'sm'}
                       onClick={() => setDateRange('week')}
-                      className={`text-xs md:text-sm ios-button ${
+                      className={`text-xs md:text-sm rounded-xl transition-all duration-300 ${
                         dateRange === 'week' 
-                          ? 'bg-green-500 text-white hover:bg-green-600 border-green-500' 
-                          : 'text-green-500 bg-white hover:bg-green-50 border-green-500'
+                          ? 'bg-white text-purple-600 shadow-lg hover:shadow-xl' 
+                          : 'text-white hover:bg-white/20'
                       }`}
                     >
                       สัปดาห์
                     </Button>
                     <Button
-                      variant={dateRange === 'month' ? 'default' : 'outline'}
+                      variant={dateRange === 'month' ? 'default' : 'ghost'}
                       size={isMobile ? 'sm' : 'sm'}
                       onClick={() => setDateRange('month')}
-                      className={`text-xs md:text-sm ios-button ${
+                      className={`text-xs md:text-sm rounded-xl transition-all duration-300 ${
                         dateRange === 'month' 
-                          ? 'bg-green-500 text-white hover:bg-green-600 border-green-500' 
-                          : 'text-green-500 bg-white hover:bg-green-50 border-green-500'
+                          ? 'bg-white text-indigo-600 shadow-lg hover:shadow-xl' 
+                          : 'text-white hover:bg-white/20'
                       }`}
                     >
                       เดือน
                     </Button>
                   </div>
                   
-                  {/* Custom Date Picker */}
+                  {/* Custom Date Picker - Enhanced */}
                   <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                     <PopoverTrigger asChild>
                       <Button
-                        variant={dateRange === 'custom' ? 'default' : 'outline'}
+                        variant="ghost"
                         size={isMobile ? 'sm' : 'sm'}
-                        className={`text-xs md:text-sm ios-button justify-between min-w-[120px] md:min-w-[150px] ${
+                        className={`text-xs md:text-sm justify-between min-w-[140px] md:min-w-[180px] transition-all duration-300 rounded-xl ${
                           dateRange === 'custom' 
-                            ? 'bg-green-500 text-white hover:bg-green-600 border-green-500' 
-                            : 'text-green-500 bg-white hover:bg-green-50 border-green-500'
+                            ? 'bg-white text-emerald-600 shadow-lg hover:shadow-xl' 
+                            : 'text-white hover:bg-white/20 bg-white/10 backdrop-blur-md border border-white/20'
                         }`}
                       >
-                        <CalendarDays className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                        <CalendarDays className="h-3 w-3 md:h-4 md:w-4 mr-2" />
                         <span className="hidden md:inline">
                           {format(selectedDate, 'dd MMM yyyy', { locale: th })}
                         </span>
                         <span className="md:hidden">
                           {format(selectedDate, 'dd/MM', { locale: th })}
                         </span>
-                        <ChevronDown className="h-3 w-3 md:h-4 md:w-4 ml-1" />
+                        <ChevronDown className="h-3 w-3 md:h-4 md:w-4 ml-2" />
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 ios-card" align="end">
+                    <PopoverContent className="w-auto p-0 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border-0" align="end">
                       <CalendarComponent
                         mode="single"
                         selected={selectedDate}
@@ -390,9 +398,9 @@ const Dashboard = () => {
                     </PopoverContent>
                   </Popover>
                   
-                  {/* Manual Refresh Button */}
+                  {/* Manual Refresh Button - Enhanced */}
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size={isMobile ? 'sm' : 'sm'}
                     onClick={() => {
                       console.log('🔄 Manual refresh triggered');
@@ -402,50 +410,52 @@ const Dashboard = () => {
                       fetchAgeGroupData();
                     }}
                     disabled={isLoading}
-                    className="text-xs md:text-sm ios-button text-blue-500 bg-white hover:bg-blue-50 border-blue-500"
+                    className="text-xs md:text-sm rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
                   >
-                    <Activity className={`h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                    <Activity className={`h-3 w-3 md:h-4 md:w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
                     {isMobile ? 'รีเฟรช' : 'รีเฟรชข้อมูล'}
                   </Button>
                 </div>
-                
-                <div className="w-10 h-10 md:w-16 md:h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/25">
-                  <Activity className="w-5 h-5 md:w-8 md:h-8 text-white" />
-                </div>
               </div>
-            </div>
-            
-            {/* Second Row: Date right aligned */}
-            <div className="flex justify-end">
-              <div className="text-right mobile-hidden md:block">
-                <p className="text-xs md:text-sm text-gray-500">
-                  {dateRange === 'today' ? 'ข้อมูล ณ วันที่' : 
-                   dateRange === 'week' ? 'ข้อมูลสัปดาห์' :
-                   dateRange === 'month' ? 'ข้อมูลเดือน' : 'ข้อมูล ณ วันที่'}
-                </p>
-                <p className="text-sm md:text-lg font-semibold text-gray-800">
-                  {dateRangeInfo.display}
-                </p>
-                {dateRange === 'week' && (
-                  <p className="text-xs text-blue-600 mt-1">
-                    จันทร์ - อาทิตย์
-                  </p>
-                )}
+              
+              {/* Date Info - Floating Card Style */}
+              <div className="flex justify-center md:justify-end">
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl px-4 py-3 border border-white/20 shadow-lg">
+                  <div className="text-center md:text-right">
+                    <p className="text-xs text-blue-100">
+                      {dateRange === 'today' ? 'ข้อมูล ณ วันที่' : 
+                       dateRange === 'week' ? 'ข้อมูลสัปดาห์' :
+                       dateRange === 'month' ? 'ข้อมูลเดือน' : 'ข้อมูล ณ วันที่'}
+                    </p>
+                    <p className="text-sm md:text-lg font-bold text-white">
+                      {dateRangeInfo.display}
+                    </p>
+                    {dateRange === 'week' && (
+                      <p className="text-xs text-blue-200 mt-1">
+                        จันทร์ - อาทิตย์
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Cards Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+        {/* Cards Section - Enhanced with Gradient Backgrounds */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {/* Card 1: ยอดการลงทะเบียนใหม่ */}
-          <Card className="ios-card hover:shadow-xl hover:shadow-black/10 transition-all duration-300">
-            <CardHeader className="pb-2 md:pb-4">
-              <CardTitle className="flex items-center gap-2 md:gap-3 text-lg md:text-xl font-semibold text-gray-800">
-                <div className="p-1.5 md:p-2 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100">
-                  <UserPlus className="h-4 w-4 md:h-6 md:w-6 text-blue-600" />
+          <Card className="group relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-600/10"></div>
+            <CardHeader className="relative pb-3 md:pb-4">
+              <CardTitle className="flex items-center gap-3 md:gap-4">
+                <div className="p-3 md:p-4 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/25 group-hover:shadow-blue-500/40 transition-all duration-300">
+                  <UserPlus className="h-5 w-5 md:h-7 md:w-7 text-white" />
                 </div>
-                <span className="text-sm md:text-xl">ยอดการลงทะเบียนใหม่</span>
+                <div>
+                  <span className="text-lg md:text-xl font-bold text-gray-800">ยอดการลงทะเบียนใหม่</span>
+                  <p className="text-xs md:text-sm text-blue-600 font-medium">New Registrations</p>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
@@ -468,7 +478,7 @@ const Dashboard = () => {
 
           {/* Card 2: ยอดการตรวจวันนี้ */}
           <Card 
-            className="ios-card hover:shadow-xl hover:shadow-black/10 transition-all duration-300 cursor-pointer"
+            className="group relative overflow-hidden bg-gradient-to-br from-emerald-50 to-green-100 border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105 cursor-pointer"
             onClick={() => {
               const today = new Date();
               setSelectedDate(today);
@@ -476,12 +486,16 @@ const Dashboard = () => {
               console.log('🔄 Clicked "การตรวจวันนี้" - Reset to today');
             }}
           >
-            <CardHeader className="pb-2 md:pb-4">
-              <CardTitle className="flex items-center gap-2 md:gap-3 text-lg md:text-xl font-semibold text-gray-800">
-                <div className="p-1.5 md:p-2 rounded-xl bg-gradient-to-br from-green-100 to-emerald-100">
-                  <Stethoscope className="h-4 w-4 md:h-6 md:w-6 text-green-600" />
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-green-600/10"></div>
+            <CardHeader className="relative pb-3 md:pb-4">
+              <CardTitle className="flex items-center gap-3 md:gap-4">
+                <div className="p-3 md:p-4 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 shadow-lg shadow-emerald-500/25 group-hover:shadow-emerald-500/40 transition-all duration-300">
+                  <Stethoscope className="h-5 w-5 md:h-7 md:w-7 text-white" />
                 </div>
-                <span className="text-sm md:text-xl">ยอดการตรวจวันนี้</span>
+                <div>
+                  <span className="text-lg md:text-xl font-bold text-gray-800">ยอดการตรวจวันนี้</span>
+                  <p className="text-xs md:text-sm text-emerald-600 font-medium">Medical Examinations</p>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
@@ -503,13 +517,17 @@ const Dashboard = () => {
           </Card>
 
           {/* Card 3: ยอดการขายวันนี้ */}
-          <Card className="ios-card hover:shadow-xl hover:shadow-black/10 transition-all duration-300">
-            <CardHeader className="pb-2 md:pb-4">
-              <CardTitle className="flex items-center gap-2 md:gap-3 text-lg md:text-xl font-semibold text-gray-800">
-                <div className="p-1.5 md:p-2 rounded-xl bg-gradient-to-br from-orange-100 to-red-100">
-                  <DollarSign className="h-4 w-4 md:h-6 md:w-6 text-orange-600" />
+          <Card className="group relative overflow-hidden bg-gradient-to-br from-orange-50 to-red-100 border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105">
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-red-600/10"></div>
+            <CardHeader className="relative pb-3 md:pb-4">
+              <CardTitle className="flex items-center gap-3 md:gap-4">
+                <div className="p-3 md:p-4 rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 shadow-lg shadow-orange-500/25 group-hover:shadow-orange-500/40 transition-all duration-300">
+                  <DollarSign className="h-5 w-5 md:h-7 md:w-7 text-white" />
                 </div>
-                <span className="text-sm md:text-xl">ยอดการขายวันนี้</span>
+                <div>
+                  <span className="text-lg md:text-xl font-bold text-gray-800">ยอดการขายวันนี้</span>
+                  <p className="text-xs md:text-sm text-orange-600 font-medium">Daily Revenue</p>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
@@ -555,56 +573,77 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+        {/* Charts Section - Enhanced with Beautiful Gradients */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
           {/* Chart 1: การตรวจรายชั่วโมง */}
-          <Card className="ios-card hover:shadow-xl hover:shadow-black/10 transition-all duration-300">
-            <CardHeader className="pb-2 md:pb-4">
-              <CardTitle className="flex items-center gap-2 md:gap-3 text-lg md:text-xl font-semibold text-gray-800">
-                <div className="p-1.5 md:p-2 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100">
-                  <Stethoscope className="h-4 w-4 md:h-6 md:w-6 text-blue-600" />
+          <Card className="group relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 border-0 shadow-xl hover:shadow-2xl transition-all duration-500">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-600/10"></div>
+            <CardHeader className="relative pb-4 md:pb-6">
+              <CardTitle className="flex items-center gap-3 md:gap-4">
+                <div className="p-3 md:p-4 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/25 group-hover:shadow-blue-500/40 transition-all duration-300">
+                  <Stethoscope className="h-5 w-5 md:h-7 md:w-7 text-white" />
                 </div>
-                <span className="text-sm md:text-xl">การตรวจรายชั่วโมง</span>
+                <div>
+                  <span className="text-lg md:text-xl font-bold text-gray-800">การตรวจรายชั่วโมง</span>
+                  <p className="text-xs md:text-sm text-blue-600 font-medium">Hourly Examinations</p>
+                </div>
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-0">
-              <div className="h-64 md:h-80">
+            <CardContent className="relative pt-0">
+              <div className="h-72 md:h-96 relative">
+                <div className="absolute inset-0 bg-gradient-to-t from-white/50 to-transparent rounded-2xl"></div>
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={hourlyRegistrationData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <BarChart data={hourlyRegistrationData} margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
+                    <defs>
+                      <linearGradient id="registrationGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.9} />
+                        <stop offset="50%" stopColor="#1d4ed8" stopOpacity={0.7} />
+                        <stop offset="100%" stopColor="#1e40af" stopOpacity={0.5} />
+                      </linearGradient>
+                      <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="4" stdDeviation="3" floodColor="#3b82f6" floodOpacity="0.3"/>
+                      </filter>
+                    </defs>
+                    <CartesianGrid 
+                      strokeDasharray="3 3" 
+                      stroke="#e2e8f0" 
+                      strokeOpacity={0.3}
+                      vertical={false}
+                    />
                     <XAxis 
                       dataKey="hour" 
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fontSize: isMobile ? 10 : 12, fill: '#666' }}
+                      tick={{ fontSize: isMobile ? 11 : 13, fill: '#64748b', fontWeight: 500 }}
+                      tickMargin={15}
                     />
                     <YAxis 
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fontSize: isMobile ? 10 : 12, fill: '#666' }}
+                      tick={{ fontSize: isMobile ? 10 : 12, fill: '#64748b', fontWeight: 500 }}
+                      tickMargin={10}
                     />
                     <Tooltip 
                       formatter={(value: number) => [`${value} ครั้ง`, 'การตรวจ']}
-                      labelStyle={{ color: '#333' }}
+                      labelStyle={{ color: '#1e293b', fontWeight: 600 }}
                       contentStyle={{ 
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                        backgroundColor: 'rgba(255, 255, 255, 0.98)', 
                         border: 'none', 
-                        borderRadius: '12px',
-                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                        borderRadius: '16px',
+                        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        padding: '12px 16px',
+                        fontSize: '14px',
+                        fontWeight: '500'
                       }}
+                      cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }}
                     />
                     <Bar 
                       dataKey="registrations" 
                       fill="url(#registrationGradient)" 
-                      radius={[4, 4, 0, 0]}
-                      maxBarSize={isMobile ? 30 : 50}
+                      radius={[8, 8, 0, 0]}
+                      maxBarSize={isMobile ? 35 : 55}
+                      filter="url(#shadow)"
                     />
-                    <defs>
-                      <linearGradient id="registrationGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#3b82f6" />
-                        <stop offset="100%" stopColor="#1d4ed8" />
-                      </linearGradient>
-                    </defs>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -612,49 +651,89 @@ const Dashboard = () => {
           </Card>
 
           {/* Chart 2: การขายรายชั่วโมง */}
-          <Card className="ios-card hover:shadow-xl hover:shadow-black/10 transition-all duration-300">
-            <CardHeader className="pb-2 md:pb-4">
-              <CardTitle className="flex items-center gap-2 md:gap-3 text-lg md:text-xl font-semibold text-gray-800">
-                <div className="p-1.5 md:p-2 rounded-xl bg-gradient-to-br from-green-100 to-emerald-100">
-                  <TrendingUp className="h-4 w-4 md:h-6 md:w-6 text-green-600" />
+          <Card className="group relative overflow-hidden bg-gradient-to-br from-emerald-50 to-green-100 border-0 shadow-xl hover:shadow-2xl transition-all duration-500">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-green-600/10"></div>
+            <CardHeader className="relative pb-4 md:pb-6">
+              <CardTitle className="flex items-center gap-3 md:gap-4">
+                <div className="p-3 md:p-4 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 shadow-lg shadow-emerald-500/25 group-hover:shadow-emerald-500/40 transition-all duration-300">
+                  <TrendingUp className="h-5 w-5 md:h-7 md:w-7 text-white" />
                 </div>
-                <span className="text-sm md:text-xl">การขายรายชั่วโมง</span>
+                <div>
+                  <span className="text-lg md:text-xl font-bold text-gray-800">การขายรายชั่วโมง</span>
+                  <p className="text-xs md:text-sm text-emerald-600 font-medium">Hourly Sales</p>
+                </div>
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-0">
-              <div className="h-64 md:h-80">
+            <CardContent className="relative pt-0">
+              <div className="h-72 md:h-96 relative">
+                <div className="absolute inset-0 bg-gradient-to-t from-white/50 to-transparent rounded-2xl"></div>
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={hourlySalesData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <LineChart data={hourlySalesData} margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
+                    <defs>
+                      <linearGradient id="salesAreaGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#10b981" stopOpacity={0.3} />
+                        <stop offset="100%" stopColor="#10b981" stopOpacity={0.05} />
+                      </linearGradient>
+                      <filter id="salesGlow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#10b981" floodOpacity="0.4"/>
+                      </filter>
+                    </defs>
+                    <CartesianGrid 
+                      strokeDasharray="3 3" 
+                      stroke="#e2e8f0" 
+                      strokeOpacity={0.3}
+                      vertical={false}
+                    />
                     <XAxis 
                       dataKey="hour" 
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fontSize: isMobile ? 10 : 12, fill: '#666' }}
+                      tick={{ fontSize: isMobile ? 11 : 13, fill: '#64748b', fontWeight: 500 }}
+                      tickMargin={15}
                     />
                     <YAxis 
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fontSize: isMobile ? 10 : 12, fill: '#666' }}
-                      tickFormatter={(value) => `฿${value.toLocaleString()}`}
+                      tick={{ fontSize: isMobile ? 10 : 12, fill: '#64748b', fontWeight: 500 }}
+                      tickFormatter={(value) => value > 0 ? `฿${(value/1000).toFixed(0)}k` : '฿0'}
+                      tickMargin={10}
                     />
                     <Tooltip 
                       formatter={(value: number) => [`฿${value.toLocaleString()}`, 'ยอดขาย']}
-                      labelStyle={{ color: '#333' }}
+                      labelStyle={{ color: '#1e293b', fontWeight: 600 }}
                       contentStyle={{ 
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                        backgroundColor: 'rgba(255, 255, 255, 0.98)', 
                         border: 'none', 
-                        borderRadius: '12px',
-                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                        borderRadius: '16px',
+                        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        padding: '12px 16px',
+                        fontSize: '14px',
+                        fontWeight: '500'
                       }}
+                      cursor={{ stroke: 'rgba(16, 185, 129, 0.2)', strokeWidth: 2 }}
                     />
                     <Line 
                       type="monotone" 
                       dataKey="sales" 
-                      stroke="#10b981" 
-                      strokeWidth={3}
-                      dot={{ fill: '#10b981', strokeWidth: 2, r: isMobile ? 3 : 4 }}
-                      activeDot={{ r: isMobile ? 5 : 6, stroke: '#10b981', strokeWidth: 2 }}
+                      stroke="#059669" 
+                      strokeWidth={5}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      dot={{ 
+                        fill: '#059669', 
+                        strokeWidth: 3, 
+                        r: isMobile ? 5 : 6,
+                        stroke: '#ffffff'
+                      }}
+                      activeDot={{ 
+                        r: isMobile ? 7 : 9, 
+                        stroke: '#059669', 
+                        strokeWidth: 4,
+                        fill: '#ffffff',
+                        style: { filter: 'drop-shadow(0 2px 4px rgba(5, 150, 105, 0.3))' }
+                      }}
+                      connectNulls={false}
+                      style={{ filter: 'drop-shadow(0 1px 2px rgba(5, 150, 105, 0.2))' }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -663,34 +742,54 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Age Group Chart Section */}
+        {/* Age Group Chart Section - Enhanced Pie Chart */}
         <div className="grid grid-cols-1">
-          <Card className="ios-card hover:shadow-xl hover:shadow-black/10 transition-all duration-300">
-            <CardHeader className="pb-2 md:pb-4">
-              <CardTitle className="flex items-center gap-2 md:gap-3 text-lg md:text-xl font-semibold text-gray-800">
-                <div className="p-1.5 md:p-2 rounded-xl bg-gradient-to-br from-purple-100 to-pink-100">
-                  <Activity className="h-4 w-4 md:h-6 md:w-6 text-purple-600" />
+          <Card className="group relative overflow-hidden bg-gradient-to-br from-purple-50 to-pink-100 border-0 shadow-xl hover:shadow-2xl transition-all duration-500">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-600/10"></div>
+            <CardHeader className="relative pb-4 md:pb-6">
+              <CardTitle className="flex items-center gap-3 md:gap-4">
+                <div className="p-3 md:p-4 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 shadow-lg shadow-purple-500/25 group-hover:shadow-purple-500/40 transition-all duration-300">
+                  <Activity className="h-5 w-5 md:h-7 md:w-7 text-white" />
                 </div>
-                <span className="text-sm md:text-xl">สัดส่วนอายุที่มาใช้บริการ</span>
+                <div>
+                  <span className="text-lg md:text-xl font-bold text-gray-800">สัดส่วนอายุที่มาใช้บริการ</span>
+                  <p className="text-xs md:text-sm text-purple-600 font-medium">Age Distribution</p>
+                </div>
               </CardTitle>
             </CardHeader>
-            <CardContent className="pt-0">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Pie Chart */}
-                <div className="h-64 md:h-80 relative">
+            <CardContent className="relative pt-0">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Enhanced Pie Chart */}
+                <div className="h-80 md:h-96 relative">
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/30 to-transparent rounded-2xl"></div>
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
+                      <defs>
+                        {ageGroupData.map((entry, index) => (
+                          <filter key={`shadow-${index}`} id={`pieSliceShadow-${index}`} x="-50%" y="-50%" width="200%" height="200%">
+                            <feDropShadow dx="2" dy="4" stdDeviation="3" floodColor={entry.color} floodOpacity="0.3"/>
+                          </filter>
+                        ))}
+                      </defs>
                       <Pie
                         data={ageGroupData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={isMobile ? 40 : 60}
-                        outerRadius={isMobile ? 80 : 120}
-                        paddingAngle={5}
+                        innerRadius={isMobile ? 50 : 70}
+                        outerRadius={isMobile ? 90 : 140}
+                        paddingAngle={3}
                         dataKey="value"
+                        animationBegin={0}
+                        animationDuration={1000}
                       >
                         {ageGroupData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={entry.color}
+                            filter={`url(#pieSliceShadow-${index})`}
+                            stroke="#ffffff"
+                            strokeWidth={2}
+                          />
                         ))}
                       </Pie>
                       <Tooltip 
@@ -699,23 +798,39 @@ const Dashboard = () => {
                           if (count === 0) {
                             return ['ไม่มีข้อมูล', 'สัดส่วน'];
                           }
-                          return [`${value}%`, 'สัดส่วน'];
+                          return [`${value}% (${count} คน)`, 'สัดส่วน'];
                         }}
                         contentStyle={{ 
-                          backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                          backgroundColor: 'rgba(255, 255, 255, 0.98)', 
                           border: 'none', 
-                          borderRadius: '12px',
-                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                          borderRadius: '16px',
+                          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                          padding: '12px 16px',
+                          fontSize: '14px',
+                          fontWeight: '500'
                         }}
+                        labelStyle={{ color: '#1e293b', fontWeight: 600 }}
                       />
                     </PieChart>
                   </ResponsiveContainer>
                   
+                  {/* Center Label */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div className="text-center bg-white/80 backdrop-blur-sm rounded-full p-4 shadow-lg">
+                      <div className="text-lg md:text-xl font-bold text-gray-800">
+                        {ageGroupData.reduce((sum, item) => sum + (item.count || 0), 0)}
+                      </div>
+                      <div className="text-xs md:text-sm text-gray-600 font-medium">
+                        ผู้ป่วยทั้งหมด
+                      </div>
+                    </div>
+                  </div>
+                  
                   {/* No Data Message */}
                   {ageGroupData.every(item => item.count === 0) && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="text-gray-400 text-sm md:text-base font-medium">
+                      <div className="text-center bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                        <div className="text-gray-400 text-sm md:text-base font-medium mb-2">
                           ไม่มีข้อมูล
                         </div>
                         <div className="text-gray-300 text-xs md:text-sm">
@@ -726,29 +841,83 @@ const Dashboard = () => {
                   )}
                 </div>
 
-                {/* Legend */}
-                <div className="flex flex-col justify-center space-y-3 md:space-y-4">
+                {/* Enhanced Legend */}
+                <div className="flex flex-col justify-center space-y-4">
+                  <div className="mb-4">
+                    <h3 className="text-lg font-bold text-gray-800 mb-2">รายละเอียดตามช่วงอายุ</h3>
+                    <p className="text-sm text-gray-600">สัดส่วนผู้ป่วยแยกตามกลุ่มอายุ</p>
+                  </div>
+                  
                   {ageGroupData.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50/50 rounded-xl">
-                      <div className="flex items-center gap-3">
-                        <div 
-                          className="w-4 h-4 rounded-full" 
-                          style={{ backgroundColor: item.color }}
-                        ></div>
-                        <span className="text-sm md:text-base font-medium text-gray-700">
-                          {item.name}
-                        </span>
+                    <div key={index} className="group relative overflow-hidden bg-white/60 backdrop-blur-sm border border-white/20 rounded-2xl p-4 hover:bg-white/80 transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="relative">
+                            <div 
+                              className="w-5 h-5 rounded-full shadow-lg ring-2 ring-white" 
+                              style={{ backgroundColor: item.color }}
+                            ></div>
+                            <div 
+                              className="absolute inset-0 w-5 h-5 rounded-full animate-pulse opacity-30" 
+                              style={{ backgroundColor: item.color }}
+                            ></div>
+                          </div>
+                          <div>
+                            <span className="text-sm md:text-base font-semibold text-gray-800">
+                              {item.name}
+                            </span>
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              Age Group
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="flex items-center gap-2">
+                            <div className="text-right">
+                              <span className="text-lg md:text-xl font-bold text-gray-800">
+                                {item.value}%
+                              </span>
+                              <p className="text-xs text-gray-500">
+                                {item.count || 0} คน
+                              </p>
+                            </div>
+                            <div 
+                              className="w-1 h-8 rounded-full opacity-60" 
+                              style={{ backgroundColor: item.color }}
+                            ></div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <span className="text-sm md:text-base font-semibold text-gray-800">
-                          {item.value}%
-                        </span>
-                        <p className="text-xs text-gray-500">
-                          {item.count || 0} คน
-                        </p>
+                      
+                      {/* Progress Bar */}
+                      <div className="mt-3 bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div 
+                          className="h-full rounded-full transition-all duration-1000 ease-out"
+                          style={{ 
+                            backgroundColor: item.color, 
+                            width: `${item.value}%`,
+                            boxShadow: `0 0 10px ${item.color}40`
+                          }}
+                        ></div>
                       </div>
                     </div>
                   ))}
+                  
+                  {/* Summary Card */}
+                  <div className="mt-6 p-4 bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl border border-purple-200/50">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-semibold text-purple-800">สรุปข้อมูล</h4>
+                        <p className="text-sm text-purple-600">ผู้ป่วยทั้งหมดในระบบ</p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-purple-800">
+                          {ageGroupData.reduce((sum, item) => sum + (item.count || 0), 0)}
+                        </div>
+                        <p className="text-sm text-purple-600">คน</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>

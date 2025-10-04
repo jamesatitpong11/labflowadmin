@@ -169,56 +169,75 @@ const RegistrationReport = () => {
   ];
 
   return (
-    <div className="flex-1 ios-safe-area ios-scroll-container bg-gradient-to-br from-slate-50/50 to-blue-50/30 min-h-screen">
-      <div className={`space-y-4 md:space-y-6 mobile-padding md:p-6 ${isMobile ? 'pb-20' : ''}`}>
-        {/* Header Section - iOS Style */}
-        <div className="ios-header mobile-padding md:p-6 mb-4 md:mb-6">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-            <div className="space-y-1 md:space-y-2">
-              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                รายงานการตรวจรายเดือน
-              </h1>
-              <p className="text-sm md:text-base text-blue-600 font-medium">
-                <Calendar className="inline h-4 w-4 mr-2 text-blue-500" />
-                {formatMonthDisplay(selectedMonth)}
-              </p>
-            </div>
-            <div className="flex flex-col md:flex-row gap-2">
-              {/* Month Filter */}
-              <Select value={selectedMonth} onValueChange={handleMonthChange}>
-                <SelectTrigger className={`ios-button ${isMobile ? 'w-full' : 'w-48'} text-blue-600`}>
-                  <div className="flex items-center">
-                    <Filter className="h-3 w-3 md:h-4 md:w-4 mr-2 text-blue-500" />
-                    <SelectValue placeholder="เลือกเดือน" className="text-blue-600" />
+    <div className="flex-1 ios-safe-area ios-scroll-container bg-gradient-to-br from-indigo-50 via-white to-cyan-50 min-h-screen">
+      <div className={`space-y-6 md:space-y-8 mobile-padding md:p-6 ${isMobile ? 'pb-20' : ''}`}>
+        {/* Header Section - Enhanced Luxury Style */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-700 shadow-2xl shadow-purple-500/25">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-20">
+            <div className="w-full h-full bg-white/5 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.15)_1px,transparent_0)] bg-[length:20px_20px]"></div>
+          </div>
+          
+          <div className="relative mobile-padding md:p-8">
+            <div className="space-y-6">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 md:w-16 md:h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
+                    <Stethoscope className="w-6 h-6 md:w-8 md:h-8 text-white" />
                   </div>
-                </SelectTrigger>
-                <SelectContent>
-                  {generateMonthOptions().map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              {/* Current Month Button */}
-              <Button 
-                variant="outline" 
-                size={isMobile ? "sm" : "sm"} 
-                className="ios-button text-xs md:text-sm text-blue-500"
-                onClick={() => {
-                  const currentMonth = new Date().toISOString().slice(0, 7);
-                  handleMonthChange(currentMonth);
-                }}
-              >
-                <Calendar className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2 text-blue-500" />
-                {isMobile ? "เดือนนี้" : "เดือนปัจจุบัน"}
-              </Button>
-              
-              <Button variant="outline" size={isMobile ? "sm" : "sm"} className="ios-button text-xs md:text-sm text-blue-500">
-                <Download className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2 text-blue-500" />
-                {isMobile ? "ส่งออก" : "ส่งออกรายงาน"}
-              </Button>
+                  <div>
+                    <h1 className="text-2xl md:text-4xl font-bold text-white drop-shadow-sm">
+                      รายงานการตรวจรายเดือน
+                    </h1>
+                    <p className="text-purple-100 font-medium text-sm md:text-base flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      {formatMonthDisplay(selectedMonth)}
+                    </p>
+                  </div>
+                </div>
+                {/* Controls - Glassmorphism Style */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="bg-white/10 backdrop-blur-md rounded-2xl p-1.5 border border-white/20">
+                    <Select value={selectedMonth} onValueChange={handleMonthChange}>
+                      <SelectTrigger className="bg-white/10 backdrop-blur-md border-white/20 text-white rounded-xl min-w-[140px] md:min-w-[180px]">
+                        <div className="flex items-center">
+                          <Filter className="h-3 w-3 md:h-4 md:w-4 mr-2" />
+                          <SelectValue placeholder="เลือกเดือน" />
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border-0">
+                        {generateMonthOptions().map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <Button 
+                    variant="ghost"
+                    size={isMobile ? "sm" : "sm"} 
+                    className="text-xs md:text-sm rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
+                    onClick={() => {
+                      const currentMonth = new Date().toISOString().slice(0, 7);
+                      handleMonthChange(currentMonth);
+                    }}
+                  >
+                    <Calendar className="h-3 w-3 md:h-4 md:w-4 mr-2" />
+                    {isMobile ? "เดือนนี้" : "เดือนปัจจุบัน"}
+                  </Button>
+                  
+                  <Button 
+                    variant="ghost" 
+                    size={isMobile ? "sm" : "sm"} 
+                    className="text-xs md:text-sm rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
+                  >
+                    <Download className="h-3 w-3 md:h-4 md:w-4 mr-2" />
+                    {isMobile ? "ส่งออก" : "ส่งออกรายงาน"}
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

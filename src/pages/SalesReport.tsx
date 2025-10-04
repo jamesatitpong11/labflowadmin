@@ -23,6 +23,11 @@ import {
   FileText,
   Download,
   Filter,
+  Activity,
+  Heart,
+  Shield,
+  Stethoscope,
+  FlaskConical,
 } from "lucide-react";
 import {
   BarChart,
@@ -186,7 +191,7 @@ const SalesReport = () => {
     }).format(amount);
   };
 
-  // TODO: Replace with real data from API
+  // Sales metrics with appropriate icons for each department
   const salesMetrics = [
     {
       title: `ยอดขาย${formatMonthDisplay(selectedMonth)}`,
@@ -201,15 +206,15 @@ const SalesReport = () => {
       value: isLoading ? "กำลังโหลด..." : formatCurrency(departmentSales['คลินิกเทคนิคการแพทย์ โปร อินเตอร์ แลบ ไชยา'] || 0),
       change: isLoading ? "กำลังโหลด..." : (departmentSales['คลินิกเทคนิคการแพทย์ โปร อินเตอร์ แลบ ไชยา'] || 0) > 0 ? "มีข้อมูล" : "ไม่มีข้อมูล",
       changeType: (departmentSales['คลินิกเทคนิคการแพทย์ โปร อินเตอร์ แลบ ไชยา'] || 0) > 0 ? "positive" as const : "neutral" as const,
-      icon: TrendingUp,
-      iconColor: "text-success",
+      icon: FlaskConical, // Laboratory/medical technology icon
+      iconColor: "text-blue-600",
     },
     {
       title: `ยอดขายคลินิกเวชกรรมไชยารวมแพทย์ (${formatMonthDisplay(selectedMonth)})`,
       value: isLoading ? "กำลังโหลด..." : formatCurrency(departmentSales['คลินิกเวชกรรมไชยารวมแพทย์'] || 0),
       change: isLoading ? "กำลังโหลด..." : (departmentSales['คลินิกเวชกรรมไชยารวมแพทย์'] || 0) > 0 ? "มีข้อมูล" : "ไม่มีข้อมูล",
       changeType: (departmentSales['คลินิกเวชกรรมไชยารวมแพทย์'] || 0) > 0 ? "positive" as const : "neutral" as const,
-      icon: Package,
+      icon: Stethoscope, // Medical clinic icon
       iconColor: "text-primary",
     },
     {
@@ -217,8 +222,8 @@ const SalesReport = () => {
       value: isLoading ? "กำลังโหลด..." : formatCurrency(departmentSales['สปสช.'] || 0),
       change: isLoading ? "กำลังโหลด..." : (departmentSales['สปสช.'] || 0) > 0 ? "มีข้อมูล" : "ไม่มีข้อมูล",
       changeType: (departmentSales['สปสช.'] || 0) > 0 ? "positive" as const : "neutral" as const,
-      icon: Users,
-      iconColor: "text-warning",
+      icon: Shield, // Government health insurance icon
+      iconColor: "text-emerald-600",
     },
   ];
 
@@ -242,64 +247,84 @@ const SalesReport = () => {
 
 
   return (
-    <div className="flex-1 ios-safe-area ios-scroll-container bg-gradient-to-br from-slate-50/50 to-blue-50/30 min-h-screen">
-      <div className={`space-y-4 md:space-y-6 mobile-padding md:p-6 ${isMobile ? 'pb-20' : ''}`}>
-        {/* Header Section - iOS Style */}
-        <div className="ios-header mobile-padding md:p-6 mb-4 md:mb-6">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-            <div className="space-y-1 md:space-y-2">
-              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                รายงานยอดขายรายเดือน
-              </h1>
-              <p className="text-sm md:text-base text-blue-600 font-medium">
-                <Calendar className="inline h-4 w-4 mr-2 text-blue-500" />
-                {formatMonthDisplay(selectedMonth)}
-              </p>
-            </div>
-            <div className="flex flex-col md:flex-row gap-2">
-              {/* Month Filter */}
-              <Select value={selectedMonth} onValueChange={handleMonthChange}>
-                <SelectTrigger className={`ios-button ${isMobile ? 'w-full' : 'w-48'} text-blue-600`}>
-                  <div className="flex items-center">
-                    <Filter className="h-3 w-3 md:h-4 md:w-4 mr-2 text-blue-500" />
-                    <SelectValue placeholder="เลือกเดือน" className="text-blue-600" />
+    <div className="flex-1 ios-safe-area ios-scroll-container bg-gradient-to-br from-indigo-50 via-white to-cyan-50 min-h-screen">
+      <div className={`space-y-6 md:space-y-8 mobile-padding md:p-6 ${isMobile ? 'pb-20' : ''}`}>
+        {/* Header Section - Enhanced Luxury Style */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700 shadow-2xl shadow-emerald-500/25">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-20">
+            <div className="w-full h-full bg-white/5 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.15)_1px,transparent_0)] bg-[length:20px_20px]"></div>
+          </div>
+          
+          <div className="relative mobile-padding md:p-8">
+            <div className="space-y-6">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 md:w-16 md:h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
+                    <DollarSign className="w-6 h-6 md:w-8 md:h-8 text-white" />
                   </div>
-                </SelectTrigger>
-                <SelectContent>
-                  {generateMonthOptions().map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              {/* Current Month Button */}
-              <Button 
-                variant="outline" 
-                size={isMobile ? "sm" : "sm"} 
-                className="ios-button text-xs md:text-sm text-blue-500"
-                onClick={() => {
-                  const currentMonth = new Date().toISOString().slice(0, 7);
-                  handleMonthChange(currentMonth);
-                }}
-              >
-                <Calendar className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2 text-blue-500" />
-                {isMobile ? "เดือนนี้" : "เดือนปัจจุบัน"}
-              </Button>
-              
-              <Button variant="outline" size={isMobile ? "sm" : "sm"} className="ios-button text-xs md:text-sm text-blue-500">
-                <Download className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2 text-blue-500" />
-                {isMobile ? "ส่งออก" : "ส่งออกรายงาน"}
-              </Button>
+                  <div>
+                    <h1 className="text-2xl md:text-4xl font-bold text-white drop-shadow-sm">
+                      รายงานยอดขายรายเดือน
+                    </h1>
+                    <p className="text-emerald-100 font-medium text-sm md:text-base flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      {formatMonthDisplay(selectedMonth)}
+                    </p>
+                  </div>
+                </div>
+                {/* Controls - Glassmorphism Style */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="bg-white/10 backdrop-blur-md rounded-2xl p-1.5 border border-white/20">
+                    <Select value={selectedMonth} onValueChange={handleMonthChange}>
+                      <SelectTrigger className="bg-white/10 backdrop-blur-md border-white/20 text-white rounded-xl min-w-[140px] md:min-w-[180px]">
+                        <div className="flex items-center">
+                          <Filter className="h-3 w-3 md:h-4 md:w-4 mr-2" />
+                          <SelectValue placeholder="เลือกเดือน" />
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border-0">
+                        {generateMonthOptions().map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <Button 
+                    variant="ghost"
+                    size={isMobile ? "sm" : "sm"} 
+                    className="text-xs md:text-sm rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
+                    onClick={() => {
+                      const currentMonth = new Date().toISOString().slice(0, 7);
+                      handleMonthChange(currentMonth);
+                    }}
+                  >
+                    <Calendar className="h-3 w-3 md:h-4 md:w-4 mr-2" />
+                    {isMobile ? "เดือนนี้" : "เดือนปัจจุบัน"}
+                  </Button>
+                  
+                  <Button 
+                    variant="ghost" 
+                    size={isMobile ? "sm" : "sm"} 
+                    className="text-xs md:text-sm rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
+                  >
+                    <Download className="h-3 w-3 md:h-4 md:w-4 mr-2" />
+                    {isMobile ? "ส่งออก" : "ส่งออกรายงาน"}
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Sales Metrics - iOS Style */}
-        <div className="grid mobile-grid-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+        {/* Sales Metrics - Enhanced with Gradient Backgrounds */}
+        <div className="grid mobile-grid-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {salesMetrics.map((metric, index) => (
-            <div key={index} className="ios-metric-card ios-bounce" style={{animationDelay: `${index * 0.1}s`}}>
+            <div key={index} className="group relative overflow-hidden bg-gradient-to-br from-white to-gray-50 border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105 rounded-2xl ios-bounce" style={{animationDelay: `${index * 0.1}s`}}>
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-600/10"></div>
               <MetricCard 
                 {...metric} 
                 onClick={() => handleMetricClick({title: metric.title, value: metric.value})}
@@ -308,28 +333,29 @@ const SalesReport = () => {
           ))}
         </div>
 
-        {/* Daily Sales Chart */}
-        <Card className="ios-card hover:shadow-xl hover:shadow-black/10 transition-all duration-300 bg-gradient-to-br from-white to-blue-50/30">
-          <CardHeader className="pb-4 md:pb-6">
+        {/* Daily Sales Chart - Enhanced */}
+        <Card className="group relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 border-0 shadow-xl hover:shadow-2xl transition-all duration-500">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-600/10"></div>
+          <CardHeader className="relative pb-4 md:pb-6">
             <CardTitle className="flex items-center justify-between">
               <div className="flex items-center gap-3 md:gap-4">
-                <div className="p-2 md:p-3 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg">
+                <div className="p-3 md:p-4 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/25 group-hover:shadow-blue-500/40 transition-all duration-300">
                   <Calendar className="h-5 w-5 md:h-7 md:w-7 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  <h3 className="text-xl md:text-2xl font-bold text-gray-800">
                     ยอดขายรายวัน
                   </h3>
-                  <p className="text-sm md:text-base text-blue-600 font-medium mt-1">
+                  <p className="text-sm md:text-base text-blue-600 font-medium">
                     {formatMonthDisplay(selectedMonth)}
                   </p>
                 </div>
               </div>
-              <div className="text-right">
+              <div className="text-right bg-white/60 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
                 <div className="text-2xl md:text-3xl font-bold text-blue-600">
                   {formatCurrency(monthlySales)}
                 </div>
-                <div className="text-xs md:text-sm text-gray-500">
+                <div className="text-xs md:text-sm text-gray-600 font-medium">
                   ยอดรวมทั้งเดือน
                 </div>
               </div>

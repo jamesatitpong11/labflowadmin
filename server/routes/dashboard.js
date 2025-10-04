@@ -24,6 +24,9 @@ const VisitSchema = new mongoose.Schema({
   status: { type: String, enum: ['รอตรวจ', 'กำลังตรวจ', 'เสร็จสิ้น', 'ยกเลิก'], default: 'รอตรวจ' },
   doctor: { type: String },
   notes: { type: String },
+  department: { type: String }, // เพิ่มฟิลด์แผนก
+  patientRights: { type: String }, // เพิ่มฟิลด์สิทธิการรักษา
+  referringOrganization: { type: String }, // เพิ่มฟิลด์หน่วยงานที่ส่งตัว
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
@@ -915,23 +918,41 @@ router.get('/monthly-sales', authenticateToken, async (req, res) => {
         if (!department || department === '' || department === null || department === undefined) {
           const visitObj = order.visitId.toObject ? order.visitId.toObject() : order.visitId;
           
-          // Try to determine department from patientRights
-          if (visitObj.patientRights) {
-            if (visitObj.patientRights.includes('สปสช') || visitObj.patientRights.includes('ประกันสังคม')) {
-              department = 'สปสช.';
-            } else if (visitObj.patientRights.includes('เงินสด') || visitObj.patientRights.includes('ชำระเงินเอง') || visitObj.patientRights.includes('จ่ายเอง')) {
+          // Try to determine department from patientRights or paymentMethod
+          const patientRights = visitObj.patientRights || '';
+          const paymentMethod = order.paymentMethod || '';
+          
+          // Logic การแยกแผนกตามสิทธิการรักษาและวิธีการชำระเงิน
+          if (patientRights.includes('สปสช') || patientRights.includes('ประกันสังคม') || 
+              paymentMethod.includes('สปสช') || paymentMethod.includes('ประกันสังคม')) {
+            department = 'สปสช.';
+          } else if (patientRights.includes('เงินสด') || patientRights.includes('ชำระเงินเอง') || 
+                     patientRights.includes('จ่ายเอง') || paymentMethod.includes('เงินสด') ||
+                     patientRights.includes('ข้าราชการ') || patientRights.includes('รัฐวิสาหกิจ')) {
+            department = 'คลินิกเทคนิคการแพทย์ โปร อินเตอร์ แลบ ไชยา';
+          } else if (visitObj.referringOrganization && 
+                     (visitObj.referringOrganization.includes('โรงพยาบาล') || 
+                      visitObj.referringOrganization.includes('คลินิก'))) {
+            department = 'คลินิกเวชกรรมไชยารวมแพทย์';
+          } else {
+            // Default department based on visitType or other criteria
+            const visitType = visitObj.visitType || '';
+            if (visitType.includes('ตรวจเลือด') || visitType.includes('Lab') || visitType.includes('ห้องปฏิบัติการ')) {
               department = 'คลินิกเทคนิคการแพทย์ โปร อินเตอร์ แลบ ไชยา';
-            } else if (visitObj.patientRights.includes('ข้าราชการ')) {
-              department = 'คลินิกเทคนิคการแพทย์ โปร อินเตอร์ แลบ ไชยา';
+            } else if (visitType.includes('ตรวจสุขภาพ') || visitType.includes('รักษา')) {
+              department = 'คลินิกเวชกรรมไชยารวมแพทย์';
             } else {
+              // Ultimate fallback
               department = 'คลินิกเวชกรรมไชยารวมแพทย์';
             }
-          } else {
-            // Default department
-            department = 'คลินิกเวชกรรมไชยารวมแพทย์';
           }
           
-          console.log(`🏥 Determined department for order ${order._id}: ${department} (from patientRights: ${visitObj.patientRights})`);
+          console.log(`🏥 Determined department for order ${order._id}: ${department}`, {
+            patientRights: visitObj.patientRights,
+            paymentMethod: order.paymentMethod,
+            visitType: visitObj.visitType,
+            referringOrg: visitObj.referringOrganization
+          });
         } else {
           console.log(`🏥 Using existing department for order ${order._id}: ${department}`);
         }
@@ -949,13 +970,29 @@ router.get('/monthly-sales', authenticateToken, async (req, res) => {
         // Normalize payment method names
         if (paymentMethod === 'ประกันสังคม') {
           paymentMethod = 'สปสช.';
+        } else if (paymentMethod === 'โอนเงิน') {
+          paymentMethod = 'เงินโอน';
+        } else if (paymentMethod === 'เงินสดเงินทอน' || paymentMethod === 'เงินสดทอน') {
+          paymentMethod = 'เงินสด';
         }
         
         if (salesByPaymentMethod[paymentMethod]) {
           salesByPaymentMethod[paymentMethod].amount += order.totalAmount || 0;
           salesByPaymentMethod[paymentMethod].count += 1;
         } else {
-          console.log(`⚠️ Unknown payment method: ${paymentMethod}`);
+          console.log(`⚠️ Unknown payment method: ${paymentMethod} - adding to เงินโอน as fallback`);
+          // Fallback to เงินโอน for unknown payment methods that might be transfer-related
+          if (paymentMethod.includes('โอน') || paymentMethod.includes('ธนาคาร') || paymentMethod.includes('transfer')) {
+            salesByPaymentMethod['เงินโอน'].amount += order.totalAmount || 0;
+            salesByPaymentMethod['เงินโอน'].count += 1;
+          } else if (paymentMethod.includes('สด') || paymentMethod.includes('cash')) {
+            salesByPaymentMethod['เงินสด'].amount += order.totalAmount || 0;
+            salesByPaymentMethod['เงินสด'].count += 1;
+          } else {
+            // Default fallback to เงินโอน
+            salesByPaymentMethod['เงินโอน'].amount += order.totalAmount || 0;
+            salesByPaymentMethod['เงินโอน'].count += 1;
+          }
         }
       }
     });
@@ -1113,19 +1150,33 @@ router.get('/department-sales', authenticateToken, async (req, res) => {
       if (!orderDepartment || orderDepartment === '' || orderDepartment === null || orderDepartment === undefined) {
         const visitObj = order.visitId.toObject ? order.visitId.toObject() : order.visitId;
         
-        // Try to determine department from patientRights
-        if (visitObj.patientRights) {
-          if (visitObj.patientRights.includes('สปสช') || visitObj.patientRights.includes('ประกันสังคม')) {
-            orderDepartment = 'สปสช.';
-          } else if (visitObj.patientRights.includes('เงินสด') || visitObj.patientRights.includes('ชำระเงินเอง') || visitObj.patientRights.includes('จ่ายเอง')) {
+        // Try to determine department from patientRights or paymentMethod
+        const patientRights = visitObj.patientRights || '';
+        const paymentMethod = order.paymentMethod || '';
+        
+        // Logic การแยกแผนกตามสิทธิการรักษาและวิธีการชำระเงิน (เหมือนกับ monthly-sales)
+        if (patientRights.includes('สปสช') || patientRights.includes('ประกันสังคม') || 
+            paymentMethod.includes('สปสช') || paymentMethod.includes('ประกันสังคม')) {
+          orderDepartment = 'สปสช.';
+        } else if (patientRights.includes('เงินสด') || patientRights.includes('ชำระเงินเอง') || 
+                   patientRights.includes('จ่ายเอง') || paymentMethod.includes('เงินสด') ||
+                   patientRights.includes('ข้าราชการ') || patientRights.includes('รัฐวิสาหกิจ')) {
+          orderDepartment = 'คลินิกเทคนิคการแพทย์ โปร อินเตอร์ แลบ ไชยา';
+        } else if (visitObj.referringOrganization && 
+                   (visitObj.referringOrganization.includes('โรงพยาบาล') || 
+                    visitObj.referringOrganization.includes('คลินิก'))) {
+          orderDepartment = 'คลินิกเวชกรรมไชยารวมแพทย์';
+        } else {
+          // Default department based on visitType or other criteria
+          const visitType = visitObj.visitType || '';
+          if (visitType.includes('ตรวจเลือด') || visitType.includes('Lab') || visitType.includes('ห้องปฏิบัติการ')) {
             orderDepartment = 'คลินิกเทคนิคการแพทย์ โปร อินเตอร์ แลบ ไชยา';
-          } else if (visitObj.patientRights.includes('ข้าราชการ')) {
-            orderDepartment = 'คลินิกเทคนิคการแพทย์ โปร อินเตอร์ แลบ ไชยา';
+          } else if (visitType.includes('ตรวจสุขภาพ') || visitType.includes('รักษา')) {
+            orderDepartment = 'คลินิกเวชกรรมไชยารวมแพทย์';
           } else {
+            // Ultimate fallback
             orderDepartment = 'คลินิกเวชกรรมไชยารวมแพทย์';
           }
-        } else {
-          orderDepartment = 'คลินิกเวชกรรมไชยารวมแพทย์';
         }
       }
       
@@ -1150,14 +1201,32 @@ router.get('/department-sales', authenticateToken, async (req, res) => {
       if (order.paymentMethod) {
         let paymentMethod = order.paymentMethod;
         
-        // Normalize payment method names
+        // Normalize payment method names (same logic as monthly-sales)
         if (paymentMethod === 'ประกันสังคม') {
           paymentMethod = 'สปสช.';
+        } else if (paymentMethod === 'โอนเงิน') {
+          paymentMethod = 'เงินโอน';
+        } else if (paymentMethod === 'เงินสดเงินทอน' || paymentMethod === 'เงินสดทอน') {
+          paymentMethod = 'เงินสด';
         }
         
         if (paymentMethods[paymentMethod]) {
           paymentMethods[paymentMethod].amount += order.totalAmount || 0;
           paymentMethods[paymentMethod].count += 1;
+        } else {
+          console.log(`⚠️ Unknown payment method in department ${department}: ${paymentMethod}`);
+          // Fallback logic
+          if (paymentMethod.includes('โอน') || paymentMethod.includes('ธนาคาร') || paymentMethod.includes('transfer')) {
+            paymentMethods['เงินโอน'].amount += order.totalAmount || 0;
+            paymentMethods['เงินโอน'].count += 1;
+          } else if (paymentMethod.includes('สด') || paymentMethod.includes('cash')) {
+            paymentMethods['เงินสด'].amount += order.totalAmount || 0;
+            paymentMethods['เงินสด'].count += 1;
+          } else {
+            // Default fallback to เงินโอน
+            paymentMethods['เงินโอน'].amount += order.totalAmount || 0;
+            paymentMethods['เงินโอน'].count += 1;
+          }
         }
       }
     });

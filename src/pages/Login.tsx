@@ -109,20 +109,21 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4 relative overflow-hidden">
-      {/* Background decorative elements */}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-cyan-50 p-4 relative overflow-hidden">
+      {/* Enhanced Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-indigo-600/20 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-cyan-400/20 to-blue-600/20 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-indigo-400/10 to-purple-600/10 rounded-full blur-3xl"></div>
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-indigo-600/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-emerald-400/20 to-cyan-600/30 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+        <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-gradient-to-r from-purple-400/15 to-pink-500/20 rounded-full blur-2xl animate-pulse" style={{animationDelay: '2s'}}></div>
+        <div className="absolute bottom-1/3 left-1/4 w-48 h-48 bg-gradient-to-r from-yellow-400/15 to-orange-500/20 rounded-full blur-2xl animate-pulse" style={{animationDelay: '3s'}}></div>
       </div>
       
       <div className="w-full max-w-lg space-y-8 relative z-10">
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex justify-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/25 transform hover:scale-105 transition-transform duration-300">
-              <Stethoscope className="w-10 h-10 text-white" />
+            <div className="w-20 h-20 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/25 transform hover:scale-105 transition-transform duration-300">
+            <img src="https://img2.pic.in.th/pic/logo9a23fce12053a876.png" className="h-18 w-18 text-primary" />
             </div>
           </div>
           <div className="space-y-2">
@@ -134,8 +135,8 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Login Form */}
-        <Card className="backdrop-blur-sm bg-white/80 border-0 shadow-2xl shadow-black/10">
+        {/* Enhanced Login Form */}
+        <Card className="group relative overflow-hidden backdrop-blur-xl bg-white/90 border-0 shadow-2xl shadow-black/10 rounded-3xl hover:shadow-3xl transition-all duration-500">
           <CardHeader className="pb-6">
             <CardTitle className="text-center text-2xl font-semibold text-gray-800">เข้าสู่ระบบ</CardTitle>
             <p className="text-center text-gray-600 text-sm mt-2">กรุณาใส่ข้อมูลเพื่อเข้าสู่ระบบ</p>
