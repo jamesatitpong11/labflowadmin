@@ -10,9 +10,17 @@ services:
         value: production
       - key: MONGODB_URI
         fromDatabase:
-          name: mongodb
+          name: labflow-mongodb
           property: connectionString
       - key: JWT_SECRET
         generateValue: true
       - key: FRONTEND_URL
         value: https://labflow-admin.netlify.app
+      - key: PORT
+        value: 10000
+
+databases:
+  - name: labflow-mongodb
+    databaseName: labflow
+    user: labflow_user
+    plan: free
