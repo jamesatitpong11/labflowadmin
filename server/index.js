@@ -36,6 +36,7 @@ app.use(cors({
     ? [
         process.env.FRONTEND_URL || 'https://labflow-admin.netlify.app',
         'https://labflowadmin.netlify.app',
+        'https://labflow2.netlify.app',
         'https://labflow-admin-backend.onrender.com'
       ] 
     : ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:8080'],
