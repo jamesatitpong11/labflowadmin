@@ -894,12 +894,12 @@ router.get('/monthly-sales', authenticateToken, async (req, res) => {
     // Group by department
     const salesByDepartment = {};
     
-    // Group by payment method
+    // Group by payment method - แบบใหม่ตามความต้องการ
     const salesByPaymentMethod = {
       'เงินสด': { amount: 0, count: 0 },
       'เงินโอน': { amount: 0, count: 0 },
-      'สปสช.': { amount: 0, count: 0 },
-      'ประกันสังคม': { amount: 0, count: 0 }
+      'เครดิต': { amount: 0, count: 0 }, // รวม เครดิต และ สปสช.
+      'ฟรี': { amount: 0, count: 0 }
     };
     
     orders.forEach(order => {
@@ -963,36 +963,33 @@ router.get('/monthly-sales', authenticateToken, async (req, res) => {
         salesByDepartment[department] += order.totalAmount || 0;
       }
       
-      // Group by payment method
+      // Group by payment method - จัดกลุ่มตามความต้องการใหม่
       if (order.paymentMethod) {
         let paymentMethod = order.paymentMethod;
+        let targetCategory = null;
         
-        // Normalize payment method names
-        if (paymentMethod === 'ประกันสังคม') {
-          paymentMethod = 'สปสช.';
-        } else if (paymentMethod === 'โอนเงิน') {
-          paymentMethod = 'เงินโอน';
-        } else if (paymentMethod === 'เงินสดเงินทอน' || paymentMethod === 'เงินสดทอน') {
-          paymentMethod = 'เงินสด';
+        // จัดกลุ่มการชำระเงินตามความต้องการใหม่
+        if (paymentMethod.includes('เงินสด') || paymentMethod.includes('cash') || 
+            paymentMethod === 'เงินสดเงินทอน' || paymentMethod === 'เงินสดทอน') {
+          targetCategory = 'เงินสด';
+        } else if (paymentMethod.includes('โอน') || paymentMethod.includes('ธนาคาร') || 
+                   paymentMethod.includes('transfer') || paymentMethod === 'โอนเงิน') {
+          targetCategory = 'เงินโอน';
+        } else if (paymentMethod.includes('สปสช') || paymentMethod.includes('ประกันสังคม') || 
+                   paymentMethod.includes('เครดิต') || paymentMethod === 'ประกันสังคม') {
+          targetCategory = 'เครดิต'; // รวม เครดิต และ สปสช.
+        } else if (paymentMethod.includes('ฟรี') || paymentMethod.includes('free') || 
+                   paymentMethod === 'ไม่มีค่าใช้จ่าย') {
+          targetCategory = 'ฟรี';
+        } else {
+          // Default fallback - ถ้าไม่มีหมวดหมู่ที่จับคู่ได้ ให้ใส่ใน เงินโอน
+          console.log(`⚠️ Unknown payment method: ${paymentMethod} - adding to เงินโอน as fallback`);
+          targetCategory = 'เงินโอน';
         }
         
-        if (salesByPaymentMethod[paymentMethod]) {
-          salesByPaymentMethod[paymentMethod].amount += order.totalAmount || 0;
-          salesByPaymentMethod[paymentMethod].count += 1;
-        } else {
-          console.log(`⚠️ Unknown payment method: ${paymentMethod} - adding to เงินโอน as fallback`);
-          // Fallback to เงินโอน for unknown payment methods that might be transfer-related
-          if (paymentMethod.includes('โอน') || paymentMethod.includes('ธนาคาร') || paymentMethod.includes('transfer')) {
-            salesByPaymentMethod['เงินโอน'].amount += order.totalAmount || 0;
-            salesByPaymentMethod['เงินโอน'].count += 1;
-          } else if (paymentMethod.includes('สด') || paymentMethod.includes('cash')) {
-            salesByPaymentMethod['เงินสด'].amount += order.totalAmount || 0;
-            salesByPaymentMethod['เงินสด'].count += 1;
-          } else {
-            // Default fallback to เงินโอน
-            salesByPaymentMethod['เงินโอน'].amount += order.totalAmount || 0;
-            salesByPaymentMethod['เงินโอน'].count += 1;
-          }
+        if (salesByPaymentMethod[targetCategory]) {
+          salesByPaymentMethod[targetCategory].amount += order.totalAmount || 0;
+          salesByPaymentMethod[targetCategory].count += 1;
         }
       }
     });
@@ -1185,12 +1182,12 @@ router.get('/department-sales', authenticateToken, async (req, res) => {
 
     console.log(`🏥 Filtered orders for ${department}:`, departmentOrders.length);
 
-    // Calculate payment methods for this department
+    // Calculate payment methods for this department - แบบใหม่
     const paymentMethods = {
       'เงินสด': { amount: 0, count: 0 },
       'เงินโอน': { amount: 0, count: 0 },
-      'สปสช.': { amount: 0, count: 0 },
-      'ประกันสังคม': { amount: 0, count: 0 }
+      'เครดิต': { amount: 0, count: 0 }, // รวม เครดิต และ สปสช.
+      'ฟรี': { amount: 0, count: 0 }
     };
 
     let totalSales = 0;
@@ -1200,33 +1197,30 @@ router.get('/department-sales', authenticateToken, async (req, res) => {
       
       if (order.paymentMethod) {
         let paymentMethod = order.paymentMethod;
+        let targetCategory = null;
         
-        // Normalize payment method names (same logic as monthly-sales)
-        if (paymentMethod === 'ประกันสังคม') {
-          paymentMethod = 'สปสช.';
-        } else if (paymentMethod === 'โอนเงิน') {
-          paymentMethod = 'เงินโอน';
-        } else if (paymentMethod === 'เงินสดเงินทอน' || paymentMethod === 'เงินสดทอน') {
-          paymentMethod = 'เงินสด';
+        // จัดกลุ่มการชำระเงินตามความต้องการใหม่ (same logic as monthly-sales)
+        if (paymentMethod.includes('เงินสด') || paymentMethod.includes('cash') || 
+            paymentMethod === 'เงินสดเงินทอน' || paymentMethod === 'เงินสดทอน') {
+          targetCategory = 'เงินสด';
+        } else if (paymentMethod.includes('โอน') || paymentMethod.includes('ธนาคาร') || 
+                   paymentMethod.includes('transfer') || paymentMethod === 'โอนเงิน') {
+          targetCategory = 'เงินโอน';
+        } else if (paymentMethod.includes('สปสช') || paymentMethod.includes('ประกันสังคม') || 
+                   paymentMethod.includes('เครดิต') || paymentMethod === 'ประกันสังคม') {
+          targetCategory = 'เครดิต'; // รวม เครดิต และ สปสช.
+        } else if (paymentMethod.includes('ฟรี') || paymentMethod.includes('free') || 
+                   paymentMethod === 'ไม่มีค่าใช้จ่าย') {
+          targetCategory = 'ฟรี';
+        } else {
+          // Default fallback
+          console.log(`⚠️ Unknown payment method in department ${department}: ${paymentMethod} - adding to เงินโอน as fallback`);
+          targetCategory = 'เงินโอน';
         }
         
-        if (paymentMethods[paymentMethod]) {
-          paymentMethods[paymentMethod].amount += order.totalAmount || 0;
-          paymentMethods[paymentMethod].count += 1;
-        } else {
-          console.log(`⚠️ Unknown payment method in department ${department}: ${paymentMethod}`);
-          // Fallback logic
-          if (paymentMethod.includes('โอน') || paymentMethod.includes('ธนาคาร') || paymentMethod.includes('transfer')) {
-            paymentMethods['เงินโอน'].amount += order.totalAmount || 0;
-            paymentMethods['เงินโอน'].count += 1;
-          } else if (paymentMethod.includes('สด') || paymentMethod.includes('cash')) {
-            paymentMethods['เงินสด'].amount += order.totalAmount || 0;
-            paymentMethods['เงินสด'].count += 1;
-          } else {
-            // Default fallback to เงินโอน
-            paymentMethods['เงินโอน'].amount += order.totalAmount || 0;
-            paymentMethods['เงินโอน'].count += 1;
-          }
+        if (paymentMethods[targetCategory]) {
+          paymentMethods[targetCategory].amount += order.totalAmount || 0;
+          paymentMethods[targetCategory].count += 1;
         }
       }
     });
