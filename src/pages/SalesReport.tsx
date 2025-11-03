@@ -286,15 +286,15 @@ const SalesReport = () => {
           <div className="relative mobile-padding md:p-8">
             <div className="space-y-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 md:w-16 md:h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
-                    <DollarSign className="w-6 h-6 md:w-8 md:h-8 text-white" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
+                    <DollarSign className="w-5 h-5 md:w-6 md:h-6 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-2xl md:text-4xl font-bold text-white drop-shadow-sm">
+                    <h1 className="text-xl md:text-2xl font-bold text-white drop-shadow-sm">
                       รายงานยอดขายรายเดือน
                     </h1>
-                    <p className="text-emerald-100 font-medium text-sm md:text-base flex items-center gap-2">
+                    <p className="text-emerald-100 font-medium text-xs md:text-sm flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       {formatMonthDisplay(selectedMonth)}
                     </p>
@@ -348,7 +348,7 @@ const SalesReport = () => {
         </div>
 
         {/* Sales Metrics - Enhanced with Gradient Backgrounds */}
-        <div className="grid mobile-grid-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid mobile-grid-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
           {salesMetrics.map((metric, index) => (
             <div key={index} className="group relative overflow-hidden bg-gradient-to-br from-white to-gray-50 border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105 rounded-2xl ios-bounce" style={{animationDelay: `${index * 0.1}s`}}>
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-600/10"></div>
@@ -363,33 +363,33 @@ const SalesReport = () => {
         {/* Daily Sales Chart - Enhanced */}
         <Card className="group relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 border-0 shadow-xl hover:shadow-2xl transition-all duration-500">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-600/10"></div>
-          <CardHeader className="relative pb-4 md:pb-6">
+          <CardHeader className="relative pb-3 md:pb-4">
             <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center gap-3 md:gap-4">
-                <div className="p-3 md:p-4 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/25 group-hover:shadow-blue-500/40 transition-all duration-300">
-                  <Calendar className="h-5 w-5 md:h-7 md:w-7 text-white" />
+              <div className="flex items-center gap-2 md:gap-3">
+                <div className="p-2 md:p-3 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/25 group-hover:shadow-blue-500/40 transition-all duration-300">
+                  <Calendar className="h-4 w-4 md:h-5 md:w-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl md:text-2xl font-bold text-gray-800">
+                  <h3 className="text-lg md:text-xl font-bold text-gray-800">
                     ยอดขายรายวัน
                   </h3>
-                  <p className="text-sm md:text-base text-blue-600 font-medium">
+                  <p className="text-xs md:text-sm text-blue-600 font-medium">
                     {formatMonthDisplay(selectedMonth)}
                   </p>
                 </div>
               </div>
-              <div className="text-right bg-white/60 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
-                <div className="text-2xl md:text-3xl font-bold text-blue-600">
+              <div className="text-right bg-white/60 backdrop-blur-sm rounded-2xl p-3 shadow-lg">
+                <div className="text-xl md:text-2xl font-bold text-blue-600">
                   {formatCurrency(monthlySales)}
                 </div>
-                <div className="text-xs md:text-sm text-gray-600 font-medium">
+                <div className="text-[11px] md:text-xs text-gray-600 font-medium">
                   ยอดรวมทั้งเดือน
                 </div>
               </div>
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="h-96 md:h-[28rem] relative">
+            <div className="h-64 md:h-[20rem] relative">
               {isLoading ? (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
@@ -529,6 +529,7 @@ const SalesReport = () => {
           value={selectedMetric.value}
           paymentMethodData={selectedMetric.paymentMethodData}
           departmentName={selectedMetric.departmentName}
+          selectedMonth={selectedMonth}
         />
       )}
     </div>

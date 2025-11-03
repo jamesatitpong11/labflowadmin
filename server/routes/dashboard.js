@@ -51,38 +51,20 @@ const router = express.Router();
 
 // Helper function to convert UTC to Thailand timezone
 function toThailandTime(date) {
-  // Create a new date object and convert to Thailand timezone
+  // Create a new date object and convert to Thailand timezone (UTC+7)
   const utcDate = new Date(date);
   
-  // Method 1: Use toLocaleString with Asia/Bangkok timezone
-  const thailandTimeString = utcDate.toLocaleString('en-CA', { 
-    timeZone: 'Asia/Bangkok',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  });
-  
-  // Parse the string back to Date object
-  const [datePart, timePart] = thailandTimeString.split(', ');
-  const [year, month, day] = datePart.split('-');
-  const [hour, minute, second] = timePart.split(':');
-  
-  const result = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), 
-                  parseInt(hour), parseInt(minute), parseInt(second));
+  // Add 7 hours to convert UTC to Thailand time
+  const thailandTime = new Date(utcDate.getTime() + (7 * 60 * 60 * 1000));
   
   // Debug logging for time conversion verification
   console.log('🕐 Time conversion debug:', {
     input: utcDate.toISOString(),
-    thailandString: thailandTimeString,
-    parsedResult: result.toISOString(),
-    localString: result.toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' })
+    thailandTime: thailandTime.toISOString(),
+    localString: thailandTime.toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' })
   });
   
-  return result;
+  return thailandTime;
 }
 
 // Helper function to get start of day in Thailand timezone
@@ -841,24 +823,30 @@ router.get('/monthly-sales', authenticateToken, async (req, res) => {
     }
     
     // Calculate start and end dates for the month in Thailand timezone
-    const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
-    const endDate = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59, 999);
+    // For Thailand timezone (UTC+7), we need to create proper date ranges
+    // Start of month: 1st day at 00:00:00 Thailand time (which is 17:00:00 UTC of previous day)
+    const startDateTH = new Date(parseInt(year), parseInt(month) - 1, 1, 0, 0, 0, 0);
+    // End of month: last day at 23:59:59.999 Thailand time
+    const endDateTH = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59, 999);
     
-    // Convert to Thailand timezone
-    const startDateTH = toThailandTime(startDate);
-    const endDateTH = toThailandTime(endDate);
+    // Convert Thailand time to UTC for database query (subtract 7 hours)
+    const startDateUTC = new Date(startDateTH.getTime() - (7 * 60 * 60 * 1000));
+    const endDateUTC = new Date(endDateTH.getTime() - (7 * 60 * 60 * 1000));
     
     console.log('📅 Monthly sales date range:', { 
-      startDate: startDateTH, 
-      endDate: endDateTH,
+      startDateTH: startDateTH, 
+      endDateTH: endDateTH,
+      startDateUTC: startDateUTC,
+      endDateUTC: endDateUTC,
       year: parseInt(year),
       month: parseInt(month)
     });
 
     // Get orders in the selected month with both 'process' and 'completed' status
     // Populate visitId to get department information
+    // Use UTC dates for database query since MongoDB stores dates in UTC
     const orders = await Order.find({
-      orderDate: { $gte: startDateTH, $lte: endDateTH },
+      orderDate: { $gte: startDateUTC, $lte: endDateUTC },
       status: { $in: ['process', 'completed'] }
     }).populate('visitId').select('totalAmount status orderDate visitId paymentMethod labOrders');
 
@@ -1054,10 +1042,12 @@ router.get('/monthly-sales', authenticateToken, async (req, res) => {
       dailySales[day] = 0;
     }
     
-    // Group orders by day
+    // Group orders by day using Thailand timezone
     orders.forEach(order => {
       if (order.orderDate) {
-        const orderDay = new Date(order.orderDate).getDate();
+        // Convert order date to Thailand timezone for proper day calculation
+        const orderDateTH = new Date(order.orderDate.getTime() + (7 * 60 * 60 * 1000)); // UTC+7 for Thailand
+        const orderDay = orderDateTH.getDate();
         if (dailySales[orderDay] !== undefined) {
           dailySales[orderDay] += order.totalAmount || 0;
         }
