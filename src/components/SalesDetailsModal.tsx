@@ -97,18 +97,33 @@ export function SalesDetailsModal({ isOpen, onClose, title, value, paymentMethod
     fetchDepartmentData();
   }, [isOpen, departmentName, selectedMonth]);
 
-  // Calculate payment method data with proper grouping
+  // แยกโหมดการดูข้อมูล: เฉพาะหน่วยงาน vs รวมทั้งเดือน
+  const isDepartmentView = Boolean(departmentName);
+  const sourcePaymentMethods = isDepartmentView ? (departmentData?.paymentMethods || {}) : (paymentMethodData || {});
+
+  // คำนวณข้อมูลวิธีชำระเงินโดยไม่ผสมข้อมูลรวมเข้ากับหน่วยงาน
   const paymentMethodsData = {
-    cash: departmentData?.paymentMethods?.['เงินสด'] || paymentMethodData?.['เงินสด'] || { amount: 0, percentage: "0%", count: 0 },
-    transfer: departmentData?.paymentMethods?.['เงินโอน'] || paymentMethodData?.['เงินโอน'] || { amount: 0, percentage: "0%", count: 0 },
-    credit: {
-      amount: (departmentData?.paymentMethods?.['เครดิต']?.amount || paymentMethodData?.['เครดิต']?.amount || 0) + 
-              (departmentData?.paymentMethods?.['สปสช.']?.amount || paymentMethodData?.['สปสช.']?.amount || 0),
-      count: (departmentData?.paymentMethods?.['เครดิต']?.count || paymentMethodData?.['เครดิต']?.count || 0) + 
-             (departmentData?.paymentMethods?.['สปสช.']?.count || paymentMethodData?.['สปสช.']?.count || 0),
-      percentage: "0%"
+    cash: {
+      amount: sourcePaymentMethods['เงินสด']?.amount || 0,
+      percentage: '0%',
+      count: sourcePaymentMethods['เงินสด']?.count || 0,
     },
-    free: departmentData?.paymentMethods?.['ฟรี'] || paymentMethodData?.['ฟรี'] || { amount: 0, percentage: "0%", count: 0 }
+    transfer: {
+      amount: sourcePaymentMethods['เงินโอน']?.amount || 0,
+      percentage: '0%',
+      count: sourcePaymentMethods['เงินโอน']?.count || 0,
+    },
+    // รวมเครดิต + สปสช. ตามดีไซน์เดิม
+    credit: {
+      amount: (sourcePaymentMethods['เครดิต']?.amount || 0) + (sourcePaymentMethods['สปสช.']?.amount || 0),
+      percentage: '0%',
+      count: (sourcePaymentMethods['เครดิต']?.count || 0) + (sourcePaymentMethods['สปสช.']?.count || 0),
+    },
+    free: {
+      amount: sourcePaymentMethods['ฟรี']?.amount || 0,
+      percentage: '0%',
+      count: sourcePaymentMethods['ฟรี']?.count || 0,
+    },
   };
 
   // Calculate total amount for percentage calculation
@@ -123,18 +138,21 @@ export function SalesDetailsModal({ isOpen, onClose, title, value, paymentMethod
     paymentMethodsData.free.percentage = `${((paymentMethodsData.free.amount / totalPaymentAmount) * 100).toFixed(1)}%`;
   }
 
-  // Use department-specific data or fallback to general data
+  // สรุปข้อมูลตามโหมดการดู: หน่วยงานใช้ข้อมูลจาก API เท่านั้น, มองรวมใช้ข้อมูลรวม
   const salesDetails = {
-    totalSales: departmentData ? formatCurrency(departmentData.totalSales) : value,
+    totalSales: isDepartmentView ? formatCurrency(departmentData?.totalSales || 0) : value,
     paymentMethods: paymentMethodsData,
-    topProducts: departmentData?.topServices?.map((service: any) => ({
+    topProducts: (isDepartmentView
+      ? (departmentData?.topServices || [])
+      : (departmentData?.topServices || [])
+    ).map((service: any) => ({
       name: service.name,
       sales: formatCurrency(service.totalAmount),
       percentage: `${service.percentage}%`,
       count: service.count,
-      avgPrice: formatCurrency(service.avgPrice)
+      avgPrice: formatCurrency(service.avgPrice),
     })) || [
-      { name: "ไม่มีข้อมูล", sales: "฿0", percentage: "0%", count: 0, avgPrice: "฿0" }
+      { name: 'ไม่มีข้อมูล', sales: '฿0', percentage: '0%', count: 0, avgPrice: '฿0' },
     ],
   };
 

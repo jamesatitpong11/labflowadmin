@@ -49,22 +49,15 @@ const Order = mongoose.model('Order', OrderSchema);
 
 const router = express.Router();
 
-// Helper function to convert UTC to Thailand timezone
+// Helper function to convert to Date for formatting (avoid double time shifting)
 function toThailandTime(date) {
-  // Create a new date object and convert to Thailand timezone (UTC+7)
-  const utcDate = new Date(date);
-  
-  // Add 7 hours to convert UTC to Thailand time
-  const thailandTime = new Date(utcDate.getTime() + (7 * 60 * 60 * 1000));
-  
-  // Debug logging for time conversion verification
-  console.log('🕐 Time conversion debug:', {
-    input: utcDate.toISOString(),
-    thailandTime: thailandTime.toISOString(),
-    localString: thailandTime.toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' })
-  });
-  
-  return thailandTime;
+  return new Date(date);
+}
+
+// Helper: get hour in Thailand timezone using UTC components
+function getThailandHour(date) {
+  const d = new Date(date);
+  return (d.getUTCHours() + 7) % 24;
 }
 
 // Helper function to get start of day in Thailand timezone
@@ -434,15 +427,17 @@ router.get('/hourly-registrations', authenticateToken, async (req, res) => {
     } else {
       targetDate = getThailandDayStart(now);
     }
-    
-    const startDate = targetDate;
-    const endDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000);
+    // Define Thailand day boundaries and convert to UTC for DB query
+    const startDateTH = targetDate;
+    const endDateTH = new Date(startDateTH.getTime() + 24 * 60 * 60 * 1000);
+    const startDateUTC = new Date(startDateTH.getTime() - (7 * 60 * 60 * 1000));
+    const endDateUTC = new Date(endDateTH.getTime() - (7 * 60 * 60 * 1000));
 
-    console.log('📊 Hourly visits query:', { selectedDate, startDate, endDate });
+    console.log('📊 Hourly visits query:', { selectedDate, startDateTH, endDateTH, startDateUTC, endDateUTC });
 
     // Get visits created in the selected date
     const visits = await Visit.find({
-      createdAt: { $gte: startDate, $lt: endDate }
+      createdAt: { $gte: startDateUTC, $lt: endDateUTC }
     }).populate('patientId', 'firstName lastName').select('createdAt patientId');
 
     console.log('🏥 Found visits:', visits.length);
@@ -457,26 +452,23 @@ router.get('/hourly-registrations', authenticateToken, async (req, res) => {
       });
     }
 
-    // Count visits by hour (converted to Thailand time)
+    // Count visits by hour (Thailand timezone derived from UTC)
     visits.forEach(visit => {
-      // Convert UTC createdAt to Thailand time
-      const visitTime = toThailandTime(visit.createdAt);
-      const hour = visitTime.getHours();
+      const utc = new Date(visit.createdAt);
+      const hourTH = getThailandHour(utc);
       
       console.log(`🕐 Visit ID: ${visit._id}`);
-      console.log(`   UTC: ${visit.createdAt.toISOString()}`);
-      console.log(`   Thailand: ${visitTime.getFullYear()}-${String(visitTime.getMonth() + 1).padStart(2, '0')}-${String(visitTime.getDate()).padStart(2, '0')} ${String(visitTime.getHours()).padStart(2, '0')}:${String(visitTime.getMinutes()).padStart(2, '0')}:${String(visitTime.getSeconds()).padStart(2, '0')}`);
-      console.log(`   Hour: ${hour}`);
+      console.log(`   UTC: ${utc.toISOString()}`);
+      console.log(`   TH Hour: ${hourTH}`);
       
-      // Only count hours between 7:00-18:00
-      if (hour >= 7 && hour <= 18) {
-        const hourIndex = hour - 7;
+      if (hourTH >= 7 && hourTH <= 18) {
+        const hourIndex = hourTH - 7;
         if (hourIndex >= 0 && hourIndex < hourlyData.length) {
           hourlyData[hourIndex].registrations++;
-          console.log(`   ✅ Added to hour ${hour}:00 (index ${hourIndex})`);
+          console.log(`   ✅ Added to hour ${hourTH}:00 (index ${hourIndex})`);
         }
       } else {
-        console.log(`   ❌ Outside working hours (7-18), hour: ${hour}`);
+        console.log(`   ❌ Outside working hours (7-18), hourTH: ${hourTH}`);
       }
     });
 
@@ -485,7 +477,7 @@ router.get('/hourly-registrations', authenticateToken, async (req, res) => {
     res.json(createSuccessResponse({
       hourlyData,
       totalRegistrations: visits.length,
-      date: startDate.toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' })
+      date: startDateTH.toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' })
     }, 'Hourly visits retrieved successfully'));
 
   } catch (error) {
@@ -512,15 +504,17 @@ router.get('/hourly-sales', authenticateToken, async (req, res) => {
     } else {
       targetDate = getThailandDayStart(now);
     }
-    
-    const startDate = targetDate;
-    const endDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000);
+    // Define Thailand day boundaries and convert to UTC for DB query
+    const startDateTH = targetDate;
+    const endDateTH = new Date(startDateTH.getTime() + 24 * 60 * 60 * 1000);
+    const startDateUTC = new Date(startDateTH.getTime() - (7 * 60 * 60 * 1000));
+    const endDateUTC = new Date(endDateTH.getTime() - (7 * 60 * 60 * 1000));
 
-    console.log('💰 Hourly sales query:', { selectedDate, startDate, endDate });
+    console.log('💰 Hourly sales query:', { selectedDate, startDateTH, endDateTH, startDateUTC, endDateUTC });
 
     // Get orders in the selected date
     const orders = await Order.find({
-      orderDate: { $gte: startDate, $lt: endDate },
+      orderDate: { $gte: startDateUTC, $lt: endDateUTC },
       status: { $in: ['process', 'completed'] }
     }).select('orderDate totalAmount status');
 
@@ -536,14 +530,12 @@ router.get('/hourly-sales', authenticateToken, async (req, res) => {
       });
     }
 
-    // Sum sales by hour
+    // Sum sales by hour (Thailand timezone derived from UTC)
     orders.forEach(order => {
-      const orderTime = toThailandTime(order.orderDate);
-      const hour = orderTime.getHours();
-      
-      // Only count hours between 7:00-18:00
-      if (hour >= 7 && hour <= 18) {
-        const hourIndex = hour - 7;
+      const utc = new Date(order.orderDate);
+      const hourTH = getThailandHour(utc);
+      if (hourTH >= 7 && hourTH <= 18) {
+        const hourIndex = hourTH - 7;
         if (hourIndex >= 0 && hourIndex < hourlyData.length) {
           hourlyData[hourIndex].sales += order.totalAmount || 0;
         }
@@ -558,7 +550,7 @@ router.get('/hourly-sales', authenticateToken, async (req, res) => {
       hourlyData,
       totalSales,
       totalOrders: orders.length,
-      date: startDate.toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' })
+      date: startDateTH.toLocaleDateString('th-TH', { timeZone: 'Asia/Bangkok' })
     }, 'Hourly sales retrieved successfully'));
 
   } catch (error) {
